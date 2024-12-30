@@ -104,7 +104,7 @@ function CalendarApp(): JSX.Element {
                 ? "bg-white text-gray-800"
                 : "bg-gray-50 text-gray-400"
             } ${
-              isSameDay(day, selectedDate)
+              selectedDate && isSameDay(day, selectedDate)
                 ? "bg-blue-200 text-blue-900 font-bold"
                 : ""
             } ${
