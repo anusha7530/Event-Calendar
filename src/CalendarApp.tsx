@@ -14,34 +14,37 @@ import {
 } from "date-fns";
 import { Dialog, DialogTrigger, DialogContent } from "./components/ui/dialog";
 
+// Event Type with Category
 interface Event {
   name: string;
   startTime: string;
   endTime: string;
   description?: string;
-  category: "work" | "personal" | "others";
+  category: "work" | "personal" | "others"; // New field for category
   date: Date;
 }
 
+// Main Calendar App
 function CalendarApp(): JSX.Element {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [editingEventIndex, setEditingEventIndex] = useState<number | null>(
-    null
-  );
+  const [editingEventIndex, setEditingEventIndex] = useState<number | null>(null);
   const [events, setEvents] = useState<Event[]>(() => {
     const savedEvents = localStorage.getItem("events");
     return savedEvents ? JSON.parse(savedEvents) : [];
   });
 
+  // Save events to localStorage
   useEffect(() => {
     localStorage.setItem("events", JSON.stringify(events));
   }, [events]);
 
+  // Handle Month Transitions
   const onPrevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
   const onNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const onDateClick = (day: Date) => setSelectedDate(day);
 
+  // Render Calendar Header
   const renderHeader = (): JSX.Element => (
     <div className="flex justify-between items-center py-4 bg-gray-200 rounded-lg px-4">
       <button
@@ -62,6 +65,7 @@ function CalendarApp(): JSX.Element {
     </div>
   );
 
+  // Render Week Days
   const renderDays = (): JSX.Element => {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return (
@@ -78,6 +82,7 @@ function CalendarApp(): JSX.Element {
     );
   };
 
+  // Render Calendar Cells
   const renderCells = (): JSX.Element => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(monthStart);
@@ -123,6 +128,7 @@ function CalendarApp(): JSX.Element {
     return <div>{rows}</div>;
   };
 
+  // Add Event to the list
   const addEvent = (event: Event) => {
     const isOverlap = events.some(
       (existingEvent) =>
@@ -140,10 +146,12 @@ function CalendarApp(): JSX.Element {
     setEvents([...events, event]);
   };
 
+  // Filter Events for the selected day
   const eventsForSelectedDay = events.filter(
     (event) => selectedDate && isSameDay(new Date(event.date), selectedDate)
   );
 
+  // Handle Event Update
   const updateEvent = (index: number, updatedEvent: Event) => {
     const updatedEvents = [...events];
     updatedEvents[index] = updatedEvent;
@@ -151,19 +159,22 @@ function CalendarApp(): JSX.Element {
     setEditingEventIndex(null);
   };
 
+  // Handle Event Deletion
   const handleDeleteEvent = (index: number) => {
     const updatedEvents = [...events];
     updatedEvents.splice(index, 1);
     setEvents(updatedEvents);
   };
 
+  // Export events to CSV
   const exportToCSV = () => {
     const csv = events
       .map(
         (event) =>
-          `${event.name},${event.startTime},${event.endTime},${
-            event.description || "N/A"
-          },${event.category},${format(event.date, "MMMM dd, yyyy")}`
+          `${event.name},${event.startTime},${event.endTime},${event.description || "N/A"},${event.category},${format(
+            event.date,
+            "MMMM dd, yyyy"
+          )}`
       )
       .join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -213,9 +224,7 @@ function CalendarApp(): JSX.Element {
                       {event.startTime} - {event.endTime}
                     </p>
                     {event.description && (
-                      <p className="text-sm text-gray-400">
-                        {event.description}
-                      </p>
+                      <p className="text-sm text-gray-400">{event.description}</p>
                     )}
                   </div>
                   <div className="flex space-x-2">
@@ -261,18 +270,13 @@ function CalendarApp(): JSX.Element {
   );
 }
 
+// Event Form Component
 interface EventFormProps {
   onAddEvent: (event: Event) => void;
   onUpdateEvent: (index: number, updatedEvent: Event) => void;
   selectedDate: Date;
   editingEventIndex: number | null;
-  initialValues?: {
-    name: string;
-    startTime: string;
-    endTime: string;
-    description?: string;
-    category: "work" | "personal" | "others";
-  };
+  initialValues?: { name: string; startTime: string; endTime: string; description?: string; category: "work" | "personal" | "others" };
 }
 
 function EventForm({
@@ -285,21 +289,12 @@ function EventForm({
   const [name, setName] = useState(initialValues?.name || "");
   const [startTime, setStartTime] = useState(initialValues?.startTime || "");
   const [endTime, setEndTime] = useState(initialValues?.endTime || "");
-  const [description, setDescription] = useState(
-    initialValues?.description || ""
-  );
+  const [description, setDescription] = useState(initialValues?.description || "");
   const [category, setCategory] = useState(initialValues?.category || "work");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newEvent = {
-      name,
-      startTime,
-      endTime,
-      description,
-      category,
-      date: selectedDate,
-    };
+    const newEvent = { name, startTime, endTime, description, category, date: selectedDate };
 
     if (editingEventIndex !== null) {
       onUpdateEvent(editingEventIndex, newEvent);
@@ -346,9 +341,7 @@ function EventForm({
       />
       <select
         value={category}
-        onChange={(e) =>
-          setCategory(e.target.value as "work" | "personal" | "others")
-        }
+        onChange={(e) => setCategory(e.target.value as "work" | "personal" | "others")}
         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
         <option value="work">Work</option>
