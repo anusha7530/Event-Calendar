@@ -1,4 +1,4 @@
-import CalendarApp from './CalendarApp'
+import CalendarApp from './components/CalendarApp'
 function App() {
   return (
     <>

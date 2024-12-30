@@ -12,7 +12,7 @@ import {
   isSameDay,
   isToday,
 } from "date-fns";
-import { Dialog, DialogTrigger, DialogContent } from "./components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent } from "./ui/dialog";
 
 // Event Type with Category
 interface Event {
