@@ -71,7 +71,7 @@ Ensure that you have the following installed on your local machine:
 
 You can access the live version of the app by visiting:
 
-**[Deployed Event Calendar Application]()**
+**[Deployed Event Calendar Application](https://eventcalendar16.netlify.app/)**
 
 ## Folder Structure
 
